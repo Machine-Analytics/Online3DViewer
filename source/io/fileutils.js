@@ -73,6 +73,7 @@ OV.RequestUrl = function (url, format, callbacks)
 	request.onload = function () {
 		if (request.status === 200) {
 			let response = request.response;
+			console.log(response)
 			OnSuccess (response);
 		} else {
 			OnError ();
