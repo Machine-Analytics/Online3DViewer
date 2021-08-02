@@ -20,9 +20,10 @@ OV.GetFileName = function (filePath)
 	if (firstSeparator !== -1) {
 		fileName = filePath.substr (firstSeparator + 1);
 	}
-	let firstParamIndex = fileName.indexOf ('?');
+	let firstParamIndex = fileName.indexOf ('='); // Machine Analytics 
 	if (firstParamIndex !== -1) {
-		fileName = fileName.substr (0, firstParamIndex);
+		// fileName = fileName.substr (0, firstParamIndex);
+		fileName = fileName.substr (firstParamIndex+1, fileName.length); // Machine Analytics  (/pcd?file=)
 	}
 	return decodeURI (fileName);
 };
@@ -60,19 +61,18 @@ OV.RequestUrl = function (url, format, callbacks)
 	}
 
 
-	//Modify!!!!!!
 	let request = new XMLHttpRequest ();
 	request.open ('GET', url, true);
 	if (format === OV.FileFormat.Text) {
 		request.responseType = 'text';
 	} else if (format === OV.FileFormat.Binary) {
-		// request.responseType = 'arraybuffer';
-		request.responseType = 'text'
+		request.responseType = 'text' // Machine Analytics
 	} else {
 		OnError ();
 		return;
 	}
 
+	// Machine Analytics
 	request.onload = function () {
 		if (request.status === 200) {
 			let response = request.response;
@@ -86,28 +86,18 @@ OV.RequestUrl = function (url, format, callbacks)
 			var zip = new JSZip();
 			zip.loadAsync(binary_string).then(function(contents) {
 				Object.keys(contents.files).forEach(function(filename) {
-					zip.file(filename).async('string').then(function(content) {
-						console.log("yayyyy")
-						var blob = new Blob([content]);
-						var f = new FileReader();
-						f.onload = function(e) {
-							console.log(e.target.result);
-							OnSuccess (e.target.result)
-						}
-						f.readAsArrayBuffer(blob);
-						
+					zip.file(filename).async('uint8array').then(function(content) {
+						console.log(content.buffer)
+						OnSuccess(content.buffer);
 					});
 				});
 			});
 
-			
-
-			// TODO unzip
-			// OnSuccess (bytes.buffer);
 		} else {
 			OnError ();
 		}
 	};
+	//
 	
 	request.onerror = function () {
 		OnError ();

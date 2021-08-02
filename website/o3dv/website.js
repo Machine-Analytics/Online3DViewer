@@ -190,7 +190,7 @@ OV.Website = class
         this.ClearHashIfNotOnlyUrlList ();
     }
 
-    LoadModelFromFileList (files)    // CHECK!!!!!!!!!
+    LoadModelFromFileList (files)  
     {
         let importSettings = new OV.ImportSettings ();
         importSettings.defaultColor = this.settings.defaultColor;
